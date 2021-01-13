@@ -8,7 +8,9 @@ public class Main {
         printer.drawLine();
 
         var nm = new NetMgr("98E743179805");
-        printer.println(nm.getName());
+        for (var addr : nm.getAddresses()) {
+            printer.println(addr);
+        }
     }
 }
 

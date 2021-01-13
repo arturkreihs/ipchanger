@@ -1,3 +1,4 @@
+import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Arrays;
 import java.util.Collections;
@@ -26,7 +27,7 @@ public class NetMgr {
         _ni = tni;
     }
 
-    public String getName() {
-        return _ni.getName();
+    String[] getAddresses() {
+        return _ni.inetAddresses().map(InetAddress::getHostAddress).filter(addr -> addr.matches("^((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\\.(?!$)|$)){4}$")).toArray(String[]::new);
     }
 }
