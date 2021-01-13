@@ -36,4 +36,11 @@ public class NetMgr {
     String[] getAddresses() {
         return _ni.map(networkInterface -> networkInterface.inetAddresses().map(InetAddress::getHostAddress).filter(addr -> addr.matches("^((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\\.(?!$)|$)){4}$")).toArray(String[]::new)).orElseGet(() -> new String[0]);
     }
+
+    void addAddress(InetAddress address) {
+        _ni.ifPresent(ni -> {
+            var idx = _ni.get().getIndex();
+            
+        });
+    }
 }

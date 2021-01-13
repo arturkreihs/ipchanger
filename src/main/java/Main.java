@@ -1,3 +1,6 @@
+import java.net.Inet4Address;
+import java.net.InetAddress;
+
 public class Main {
 
     public static void main(String[] args) throws Exception{
@@ -12,6 +15,8 @@ public class Main {
         for (var addr : nm.getAddresses()) {
             printer.println(addr);
         }
+
+        nm.addAddress(Inet4Address.getByName("192.168.78.3"));
     }
 }
 
