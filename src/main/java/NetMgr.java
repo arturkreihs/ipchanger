@@ -6,7 +6,8 @@ import java.util.Optional;
 
 public class NetMgr {
 
-    private final Optional<NetworkInterface> _ni;
+    private Optional<NetworkInterface> _ni;
+    private final int _idx;
 
     public NetMgr(String mac) throws Exception {
 //        parsing mac address
@@ -28,19 +29,48 @@ public class NetMgr {
 
         if (tni != null) {
             _ni = Optional.of(tni);
+            _idx = tni.getIndex();
+        } else {
+            _ni = Optional.empty();
+            _idx = 0;
+        }
+    }
+
+    private void refresh() throws Exception {
+        var ni = NetworkInterface.getByIndex(_idx);
+        if (ni != null) {
+            _ni = Optional.of(ni);
         } else {
             _ni = Optional.empty();
         }
     }
 
-    String[] getAddresses() {
+    public String[] getAddresses() throws Exception {
+        refresh();
         return _ni.map(networkInterface -> networkInterface.inetAddresses().map(InetAddress::getHostAddress).filter(addr -> addr.matches("^((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\\.(?!$)|$)){4}$")).toArray(String[]::new)).orElseGet(() -> new String[0]);
     }
 
-    void addAddress(InetAddress address) {
+    public void addAddress(String addr, String mask) {
         _ni.ifPresent(ni -> {
-            var idx = _ni.get().getIndex();
-            
+            try {
+                var idx = _ni.get().getIndex();
+                Runtime.getRuntime().exec(String.format("netsh interface ipv4 add address name=%d address=%s mask=%s", idx, addr, mask)).waitFor();
+            }
+            catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+    }
+
+    public void delAddress(String addr) {
+        _ni.ifPresent(ni -> {
+            try {
+                var idx = _ni.get().getIndex();
+                Runtime.getRuntime().exec(String.format("netsh interface ipv4 delete address name=%d address=%s", idx, addr)).waitFor();
+            }
+            catch (Exception ex) {
+                ex.printStackTrace();
+            }
         });
     }
 }
