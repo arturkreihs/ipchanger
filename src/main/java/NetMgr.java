@@ -2,10 +2,11 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Optional;
 
 public class NetMgr {
 
-    private final NetworkInterface _ni;
+    private final Optional<NetworkInterface> _ni;
 
     public NetMgr(String mac) throws Exception {
 //        parsing mac address
@@ -24,10 +25,18 @@ public class NetMgr {
                 break;
             }
         }
-        _ni = tni;
+
+        if (tni != null) {
+            _ni = Optional.of(tni);
+        } else {
+            _ni = Optional.empty();
+        }
     }
 
     String[] getAddresses() {
-        return _ni.inetAddresses().map(InetAddress::getHostAddress).filter(addr -> addr.matches("^((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\\.(?!$)|$)){4}$")).toArray(String[]::new);
+        if (_ni.isPresent()) {
+            return _ni.get().inetAddresses().map(InetAddress::getHostAddress).filter(addr -> addr.matches("^((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\\.(?!$)|$)){4}$")).toArray(String[]::new);
+        }
+        return new String[0];
     }
 }

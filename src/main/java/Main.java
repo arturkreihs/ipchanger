@@ -7,7 +7,8 @@ public class Main {
         printer.println("IPChanger");
         printer.drawLine();
 
-        var nm = new NetMgr("98E743179805");
+//        var nm = new NetMgr("98E743179805");
+        var nm = new NetMgr("00D861340E18");
         for (var addr : nm.getAddresses()) {
             printer.println(addr);
         }

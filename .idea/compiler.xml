@@ -9,5 +9,8 @@
         <module name="ipchanger" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="ipchanger" target="11" />
+    </bytecodeTargetLevel>
   </component>
 </project>
