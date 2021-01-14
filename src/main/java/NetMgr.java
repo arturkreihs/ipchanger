@@ -15,7 +15,7 @@ public class NetMgr {
         byte[] data = new byte[len / 2];
         for (int i = 0; i < len; i += 2) {
             data[i / 2] = (byte) ((Character.digit(mac.charAt(i), 16) << 4)
-                    + Character.digit(mac.charAt(i+1), 16));
+                    + Character.digit(mac.charAt(i + 1), 16));
         }
 
 //        getting network interface
@@ -36,7 +36,7 @@ public class NetMgr {
         }
     }
 
-    private void refresh() throws Exception {
+    public void refresh() throws Exception {
         var ni = NetworkInterface.getByIndex(_idx);
         if (ni != null) {
             _ni = Optional.of(ni);
@@ -46,7 +46,6 @@ public class NetMgr {
     }
 
     public String[] getAddresses() throws Exception {
-        refresh();
         return _ni.map(networkInterface -> networkInterface.inetAddresses().map(InetAddress::getHostAddress).filter(addr -> addr.matches("^((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\\.(?!$)|$)){4}$")).toArray(String[]::new)).orElseGet(() -> new String[0]);
     }
 
@@ -72,5 +71,15 @@ public class NetMgr {
                 ex.printStackTrace();
             }
         });
+    }
+
+    public boolean delAddress(int idx) throws Exception {
+        var addresses = getAddresses();
+        if (idx < addresses.length) {
+            delAddress(addresses[idx]);
+            return false;
+        } else {
+            return true;
+        }
     }
 }
