@@ -18,7 +18,7 @@ public class Main {
 //        var nm = new com.ascs.NetMgr("00D861340E18");
 
         while (true) {
-            printer.print("ipchanger> ");
+            printer.print("ipchanger> ", Ansi.Color.BLUE);
             var cmd = console.nextLine().split(" ");
             if (cmd.length > 0) {
                 switch (cmd[0]) {

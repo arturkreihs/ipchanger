@@ -18,6 +18,10 @@ public class Printer {
         System.out.print(text);
     }
 
+    void print(String text, Color color) {
+        System.out.print(ansi().fg(color).a(text).reset());
+    }
+
     void println(String text) {
         System.out.println(text);
     }

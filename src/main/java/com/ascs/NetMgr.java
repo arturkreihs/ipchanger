@@ -58,7 +58,7 @@ public class NetMgr {
                 Runtime.getRuntime().exec(String.format("netsh interface ipv4 add address name=%d address=%s mask=%s", idx, addr, mask)).waitFor();
                 while(true) {
                     refresh();
-                    if (Arrays.stream(getAddresses()).anyMatch(addr::equals)) {
+                    if (Arrays.asList(getAddresses()).contains(addr)) {
                         break;
                     }
                     Thread.sleep(200);
@@ -75,7 +75,7 @@ public class NetMgr {
             try {
                 var idx = _ni.get().getIndex();
                 Runtime.getRuntime().exec(String.format("netsh interface ipv4 delete address name=%d address=%s", idx, addr)).waitFor();
-                while (Arrays.stream(getAddresses()).anyMatch(addr::equals)) {
+                while (Arrays.asList(getAddresses()).contains(addr)) {
                     refresh();
                     Thread.sleep(200);
                 }
