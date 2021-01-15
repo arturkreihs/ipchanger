@@ -1,4 +1,18 @@
+package com.ascs;
+
+import org.fusesource.jansi.AnsiConsole;
+import static org.fusesource.jansi.Ansi.*;
+import static org.fusesource.jansi.Ansi.Color.*;
+
 public class Printer {
+
+    public Printer() {
+        AnsiConsole.systemInstall();
+    }
+
+    public void close() {
+        AnsiConsole.systemUninstall();
+    }
 
     void print(String text) {
         System.out.print(text);

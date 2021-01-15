@@ -1,3 +1,5 @@
+package com.ascs;
+
 import java.util.Scanner;
 
 public class Main {
@@ -11,7 +13,7 @@ public class Main {
         printer.drawLine();
 
         var nm = new NetMgr("98E743179805");
-//        var nm = new NetMgr("00D861340E18");
+//        var nm = new com.ascs.NetMgr("00D861340E18");
 
         while (true) {
             printer.print("ipchanger> ");
@@ -55,6 +57,7 @@ public class Main {
                     case "q":
                     case "quit":
                     case "exit":
+                        printer.close();
                         return;
                 }
             }
