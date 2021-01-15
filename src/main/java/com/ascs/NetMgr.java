@@ -48,7 +48,7 @@ public class NetMgr {
     }
 
     public String[] getAddresses() throws Exception {
-        return _ni.map(networkInterface -> networkInterface.inetAddresses().map(InetAddress::getHostAddress).filter(addr -> addr.matches("^((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\\.(?!$)|$)){4}$")).toArray(String[]::new)).orElseGet(() -> new String[0]);
+        return _ni.map(networkInterface -> networkInterface.inetAddresses().map(InetAddress::getHostAddress).filter(addr -> addr.matches(RegexConst.IPADDR)).toArray(String[]::new)).orElseGet(() -> new String[0]);
     }
 
     public void addAddress(String addr, String mask) {
@@ -68,6 +68,10 @@ public class NetMgr {
                 ex.printStackTrace();
             }
         });
+    }
+
+    public void addAddress(String addr, int mask) {
+
     }
 
     public void delAddress(String addr) {
