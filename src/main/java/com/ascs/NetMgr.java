@@ -47,7 +47,7 @@ public class NetMgr {
         }
     }
 
-    public String[] getAddresses() throws Exception {
+    public String[] getAddresses() {
         return _ni.map(networkInterface -> networkInterface.inetAddresses().map(InetAddress::getHostAddress).filter(addr -> addr.matches(RegexConst.IPADDR)).toArray(String[]::new)).orElseGet(() -> new String[0]);
     }
 
@@ -71,7 +71,19 @@ public class NetMgr {
     }
 
     public void addAddress(String addr, int mask) {
-
+        if (mask <= 32) {
+            var full = mask / 8;
+            var rest = mask % 8;
+            var maskarr = new int[] { 0, 0, 0, 0};
+            var idx = 0;
+            while(idx < full) {
+                maskarr[idx++] = 255;
+            }
+            if (rest > 0) {
+                maskarr[idx] = (-(255 >> rest)) & 0xff - 1;
+            }
+            addAddress(addr, String.format("%d.%d.%d.%d", maskarr[0], maskarr[1], maskarr[2], maskarr[3]));
+        }
     }
 
     public void delAddress(String addr) {
