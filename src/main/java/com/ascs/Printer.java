@@ -1,5 +1,6 @@
 package com.ascs;
 
+import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 import static org.fusesource.jansi.Ansi.*;
 import static org.fusesource.jansi.Ansi.Color.*;
@@ -28,6 +29,13 @@ public class Printer {
 
     void println(String text, Color color) {
         System.out.println(ansi().fg(color).a(text).reset());
+    }
+
+    void printArray(String[] array) {
+        int idx = 0;
+        for (var item : array) {
+            System.out.println(ansi().fgGreen().a(++idx).fgDefault().a(" - ").fgYellow().a(item).reset());
+        }
     }
 
     void drawLine() {

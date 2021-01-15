@@ -50,10 +50,7 @@ public class Main {
                     case "l":
                     case "list":
                         nm.refresh();
-                        int idx = 0;
-                        for (var addr : nm.getAddresses()) {
-                            printer.println(String.format("%d - %s", ++idx, addr), Ansi.Color.YELLOW);
-                        }
+                        printer.printArray(nm.getAddresses());
                         break;
 
                     case "q":
