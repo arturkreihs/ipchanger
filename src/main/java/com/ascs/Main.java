@@ -1,5 +1,7 @@
 package com.ascs;
 
+import org.fusesource.jansi.Ansi;
+
 import java.util.Scanner;
 
 public class Main {
@@ -9,7 +11,7 @@ public class Main {
         var console = new Scanner(System.in);
 
         printer.drawLine();
-        printer.println("IPChanger");
+        printer.println("IPChanger", Ansi.Color.RED);
         printer.drawLine();
 
         var nm = new NetMgr("98E743179805");
@@ -50,7 +52,7 @@ public class Main {
                         nm.refresh();
                         int idx = 0;
                         for (var addr : nm.getAddresses()) {
-                            printer.println(String.format("%d - %s", ++idx, addr));
+                            printer.println(String.format("%d - %s", ++idx, addr), Ansi.Color.YELLOW);
                         }
                         break;
 

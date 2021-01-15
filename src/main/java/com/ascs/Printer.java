@@ -22,6 +22,10 @@ public class Printer {
         System.out.println(text);
     }
 
+    void println(String text, Color color) {
+        System.out.println(ansi().fg(color).a(text).reset());
+    }
+
     void drawLine() {
         for (int i = 0; i < 80; i++){
             System.out.print('-');
