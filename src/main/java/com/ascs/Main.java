@@ -6,6 +6,8 @@ import java.util.Scanner;
 
 public class Main {
 
+    private static Ansi.Color INFOCOLOR = Ansi.Color.YELLOW;
+
     public static void main(String[] args) throws Exception {
         var printer = new Printer();
         var console = new Scanner(System.in);
@@ -15,18 +17,29 @@ public class Main {
         printer.println("by Artur Kreihs");
         printer.drawLine();
 
-        var nm = new NetMgr("98E743179805");
-//        var nm = new com.ascs.NetMgr("00D861340E18");
+        NetMgr nm;
+        if (args.length > 0) {
+            nm = new NetMgr(args[0]);
+        } else {
+            printer.println("No MAC address", Ansi.Color.RED);
+            return;
+        }
 
         while (true) {
             printer.print("IPChanger> ", Ansi.Color.BLUE);
-            var cmd = console.nextLine().split(" ");
+            String cmdline = console.nextLine();
+            if (!cmdline.contains(" ")) {
+                var sb = new StringBuilder(cmdline);
+                sb.insert(1, " ");
+                cmdline = sb.toString();
+            }
+            var cmd = cmdline.split(" ");
             if (cmd.length > 0) {
                 switch (cmd[0]) {
                     case "a":
                     case "add":
                         if (cmd.length > 2) {
-                            printer.println(String.format("Adding %s/%s", cmd[1], cmd[2]));
+                            printer.println(String.format("Adding %s/%s", cmd[1], cmd[2]), INFOCOLOR);
                             nm.addAddress(cmd[1], cmd[2]);
                             break;
                         }
@@ -35,6 +48,7 @@ public class Main {
                                 var ipmask = cmd[1].split("/");
                                 var mask = ipmask[1];
                                 if (mask.matches(RegexConst.DIGITS)) {
+                                    printer.println(String.format("Adding %s/%s", ipmask[0], ipmask[1]), INFOCOLOR);
                                     var ip = ipmask[0];
                                     nm.addAddress(ip, Integer.parseInt(mask));
                                 }
@@ -46,14 +60,16 @@ public class Main {
                     case "d":
                     case "del":
                         if (cmd.length > 1) {
-                            printer.println(String.format("Removing %s", cmd[1]));
                             if (cmd[1].matches(RegexConst.IPADDR)) {
+                                printer.println(String.format("Removing %s", cmd[1]), INFOCOLOR);
                                 nm.delAddress(cmd[1]);
                                 break;
                             }
                             if (cmd[1].matches(RegexConst.DIGITS)) {
                                 if (nm.delAddress(Integer.parseInt(cmd[1]) - 1)) {
-                                    printer.println("Address not found");
+                                    printer.println("Address not found", INFOCOLOR);
+                                } else {
+                                    printer.println(String.format("Removing %s", cmd[1]), INFOCOLOR);
                                 }
                                 break;
                             }
