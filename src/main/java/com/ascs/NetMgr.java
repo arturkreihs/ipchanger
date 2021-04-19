@@ -2,14 +2,13 @@ package com.ascs;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Optional;
+import java.util.*;
 
 public class NetMgr {
 
     private Optional<NetworkInterface> _ni;
     private final int _idx;
+    private Map<Integer, String> _ipmasks = new HashMap<Integer, String>();
 
     public NetMgr(String mac) throws Exception {
 //        parsing mac address
@@ -36,6 +35,8 @@ public class NetMgr {
             _ni = Optional.empty();
             _idx = 0;
         }
+
+        refreshIPMasks();
     }
 
     public void refresh() throws Exception {
@@ -45,6 +46,8 @@ public class NetMgr {
         } else {
             _ni = Optional.empty();
         }
+
+        refreshIPMasks();
     }
 
     public String[] getAddresses() {
@@ -109,6 +112,36 @@ public class NetMgr {
             return false;
         } else {
             return true;
+        }
+    }
+
+    public String getMask(String ipaddr) {
+        return _ipmasks.getOrDefault(ipaddr.hashCode(), null);
+    }
+
+    private String[] extractCSVList(String data) {
+        if (data.startsWith("{") && data.endsWith("}")) {
+            data = data.substring(1).substring(0, data.length() - 2);
+            return data.split(";");
+        }
+        return new String[0];
+    }
+
+    private void refreshIPMasks() throws Exception {
+        var cmd = String.format("wmic nicconfig where \"InterfaceIndex = %d\" get IPAddress, IPSubnet /format:csv", _idx);
+        var p = Runtime.getRuntime().exec(cmd);
+        var stream = p.getInputStream();
+        p.waitFor();
+
+        var data = new String(stream.readAllBytes());
+        var fields = data.substring(data.indexOf("\r\r\n", 1)).replace("\n", "").replace("\r", "").split(",");
+        if (fields.length > 2) {
+            var idx = 0;
+            var masks = extractCSVList(fields[2]);
+            for (var ipaddr : extractCSVList(fields[1])) {
+                int finalIdx = idx++;
+                _ipmasks.compute(ipaddr.hashCode(), (k, v) -> masks[finalIdx]);
+            }
         }
     }
 }

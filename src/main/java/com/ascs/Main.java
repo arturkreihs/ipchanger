@@ -2,6 +2,7 @@ package com.ascs;
 
 import org.fusesource.jansi.Ansi;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
@@ -82,7 +83,11 @@ public class Main {
                     case "l":
                     case "list":
                         nm.refresh();
-                        printer.printArray(nm.getAddresses());
+                        var arr = new ArrayList<String>();
+                        for (var addr : nm.getAddresses()) {
+                            arr.add(String.format("%-15s / %-15s", addr, nm.getMask(addr)));
+                        }
+                        printer.printArray(arr.toArray(new String[0]));
                         break;
 
                     case "q":
