@@ -28,12 +28,15 @@ public class Main {
         while (true) {
             printer.print("IPChanger> ", Ansi.Color.BLUE);
             String cmdline = console.nextLine();
+            if (cmdline.length() == 0) {
+                continue;
+            }
             if (!cmdline.contains(" ")) {
                 var sb = new StringBuilder(cmdline);
                 sb.insert(1, " ");
                 cmdline = sb.toString();
             }
-            var cmd = cmdline.split(" ");
+            var cmd = cmdline.split(" ", -1);
             if (cmd.length > 0) {
                 switch (cmd[0]) {
                     case "a":
@@ -87,6 +90,9 @@ public class Main {
                     case "exit":
                         printer.close();
                         return;
+
+                    default:
+                        break;
                 }
             }
         }
