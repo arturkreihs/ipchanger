@@ -119,6 +119,17 @@ public class NetMgr {
         return _ipmasks.getOrDefault(ipaddr.hashCode(), null);
     }
 
+//    public String getGateway() throws Exception {
+//        var cmd = String.format("wmic nicconfig where \"InterfaceIndex = %d\" get defaultipgateway /format:csv", _idx);
+//        var p = Runtime.getRuntime().exec(cmd);
+//        var stream = p.getInputStream();
+//        p.waitFor();
+//
+//        var data = new String(stream.readAllBytes());
+//        var fields = data.substring(data.indexOf("\r\r\n", 1)).replace("\n", "").replace("\r", "").split(",");
+//
+//    }
+
     private String[] extractCSVList(String data) {
         if (data.startsWith("{") && data.endsWith("}")) {
             data = data.substring(1).substring(0, data.length() - 2);
@@ -128,17 +139,12 @@ public class NetMgr {
     }
 
     private void refreshIPMasks() throws Exception {
-        var cmd = String.format("wmic nicconfig where \"InterfaceIndex = %d\" get IPAddress, IPSubnet /format:csv", _idx);
-        var p = Runtime.getRuntime().exec(cmd);
-        var stream = p.getInputStream();
-        p.waitFor();
-
-        var data = new String(stream.readAllBytes());
-        var fields = data.substring(data.indexOf("\r\r\n", 1)).replace("\n", "").replace("\r", "").split(",");
-        if (fields.length > 2) {
+        var lines = Proc.Exec(String.format("wmic nicconfig where \"InterfaceIndex = %d\" get IPAddress, IPSubnet /format:csv", _idx));
+        if (lines.length > 1) {
+            var line = lines[1].split(",");
             var idx = 0;
-            var masks = extractCSVList(fields[2]);
-            for (var ipaddr : extractCSVList(fields[1])) {
+            var masks = extractCSVList(line[2]);
+            for (var ipaddr : extractCSVList(line[1])) {
                 int finalIdx = idx++;
                 _ipmasks.compute(ipaddr.hashCode(), (k, v) -> masks[finalIdx]);
             }
