@@ -105,7 +105,7 @@ public class NetMgr {
         });
     }
 
-    public boolean delAddress(int idx) throws Exception {
+    public boolean delAddress(int idx) {
         var addresses = getAddresses();
         if (idx < addresses.length) {
             delAddress(addresses[idx]);
@@ -119,16 +119,19 @@ public class NetMgr {
         return _ipmasks.getOrDefault(ipaddr.hashCode(), null);
     }
 
-//    public String getGateway() throws Exception {
-//        var cmd = String.format("wmic nicconfig where \"InterfaceIndex = %d\" get defaultipgateway /format:csv", _idx);
-//        var p = Runtime.getRuntime().exec(cmd);
-//        var stream = p.getInputStream();
-//        p.waitFor();
-//
-//        var data = new String(stream.readAllBytes());
-//        var fields = data.substring(data.indexOf("\r\r\n", 1)).replace("\n", "").replace("\r", "").split(",");
-//
-//    }
+    public String getGateway() throws Exception {
+        var lines = Proc.exec(String.format("wmic nicconfig where \"InterfaceIndex = %d\" get defaultipgateway /format:csv", _idx));
+        if (lines.length > 1) {
+            var lineArray = lines[1].split(",");
+            if (lineArray.length > 1) {
+                var gateways = extractCSVList(lineArray[1]);
+                if (gateways.length > 0) {
+                    return gateways[0];
+                }
+            }
+        }
+        return null;
+    }
 
     private String[] extractCSVList(String data) {
         if (data.startsWith("{") && data.endsWith("}")) {
@@ -139,7 +142,7 @@ public class NetMgr {
     }
 
     private void refreshIPMasks() throws Exception {
-        var lines = Proc.Exec(String.format("wmic nicconfig where \"InterfaceIndex = %d\" get IPAddress, IPSubnet /format:csv", _idx));
+        var lines = Proc.exec(String.format("wmic nicconfig where \"InterfaceIndex = %d\" get IPAddress, IPSubnet /format:csv", _idx));
         if (lines.length > 1) {
             var line = lines[1].split(",");
             var idx = 0;

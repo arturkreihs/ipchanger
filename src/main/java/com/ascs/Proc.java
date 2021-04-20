@@ -1,7 +1,7 @@
 package com.ascs;
 
 public class Proc {
-    public static String[] Exec(String cmd) throws Exception {
+    public static String[] exec(String cmd) throws Exception {
         var p = Runtime.getRuntime().exec(cmd);
         var stream = p.getInputStream();
         p.waitFor();

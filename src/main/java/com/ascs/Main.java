@@ -47,36 +47,32 @@ public class Main {
                             nm.addAddress(cmd[1], cmd[2]);
                             break;
                         }
-                        if (cmd.length > 1) {
-                            if (cmd[1].contains("/")) {
-                                var ipmask = cmd[1].split("/");
-                                var mask = ipmask[1];
-                                if (mask.matches(RegexConst.DIGITS)) {
-                                    printer.println(String.format("Adding %s/%s", ipmask[0], ipmask[1]), INFOCOLOR);
-                                    var ip = ipmask[0];
-                                    nm.addAddress(ip, Integer.parseInt(mask));
-                                }
-                                break;
+                        if (cmd[1].contains("/")) {
+                            var ipmask = cmd[1].split("/");
+                            var mask = ipmask[1];
+                            if (mask.matches(RegexConst.DIGITS)) {
+                                printer.println(String.format("Adding %s/%s", ipmask[0], ipmask[1]), INFOCOLOR);
+                                var ip = ipmask[0];
+                                nm.addAddress(ip, Integer.parseInt(mask));
                             }
+                            break;
                         }
                         break;
 
                     case "d":
                     case "del":
-                        if (cmd.length > 1) {
-                            if (cmd[1].matches(RegexConst.IPADDR)) {
+                        if (cmd[1].matches(RegexConst.IPADDR)) {
+                            printer.println(String.format("Removing %s", cmd[1]), INFOCOLOR);
+                            nm.delAddress(cmd[1]);
+                            break;
+                        }
+                        if (cmd[1].matches(RegexConst.DIGITS)) {
+                            if (nm.delAddress(Integer.parseInt(cmd[1]) - 1)) {
+                                printer.println("Address not found", INFOCOLOR);
+                            } else {
                                 printer.println(String.format("Removing %s", cmd[1]), INFOCOLOR);
-                                nm.delAddress(cmd[1]);
-                                break;
                             }
-                            if (cmd[1].matches(RegexConst.DIGITS)) {
-                                if (nm.delAddress(Integer.parseInt(cmd[1]) - 1)) {
-                                    printer.println("Address not found", INFOCOLOR);
-                                } else {
-                                    printer.println(String.format("Removing %s", cmd[1]), INFOCOLOR);
-                                }
-                                break;
-                            }
+                            break;
                         }
                         break;
 
@@ -88,6 +84,17 @@ public class Main {
                             arr.add(String.format("%-15s / %-15s", addr, nm.getMask(addr)));
                         }
                         printer.printArray(arr.toArray(new String[0]));
+                        break;
+
+                    case "g":
+                    case "gate":
+                    case "gw":
+                    case "gateway":
+                        if (cmd[1].length() > 0) {
+                            printer.println("adding gw " + cmd[1]);
+                        } else {
+                            printer.println(nm.getGateway());
+                        }
                         break;
 
                     case "q":
