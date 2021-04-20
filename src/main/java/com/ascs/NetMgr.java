@@ -8,7 +8,7 @@ public class NetMgr {
 
     private Optional<NetworkInterface> _ni;
     private final int _idx;
-    private Map<Integer, String> _ipmasks = new HashMap<Integer, String>();
+    private final Map<Integer, String> _ipmasks = new HashMap<Integer, String>();
 
     public NetMgr(String mac) throws Exception {
 //        parsing mac address
@@ -115,8 +115,12 @@ public class NetMgr {
         }
     }
 
-    public String getMask(String ipaddr) {
-        return _ipmasks.getOrDefault(ipaddr.hashCode(), null);
+    public Optional<String> getMask(String addr) {
+        var mask = _ipmasks.getOrDefault(addr.hashCode(), null);
+        if (mask != null) {
+            return Optional.of(mask);
+        }
+        return Optional.empty();
     }
 
     public String getGateway() throws Exception {
@@ -131,6 +135,11 @@ public class NetMgr {
             }
         }
         return null;
+    }
+
+    public void setGateway(String addr) throws Exception {
+        Runtime.getRuntime().exec(String.format("netsh interface ip del route 0.0.0.0/0 %d", _idx)).waitFor();
+        Runtime.getRuntime().exec(String.format("netsh interface ip add route 0.0.0.0/0 %d %s", _idx, addr)).waitFor();
     }
 
     private String[] extractCSVList(String data) {

@@ -81,7 +81,8 @@ public class Main {
                         nm.refresh();
                         var arr = new ArrayList<String>();
                         for (var addr : nm.getAddresses()) {
-                            arr.add(String.format("%-15s / %-15s", addr, nm.getMask(addr)));
+                            var mask = nm.getMask(addr);
+                            mask.ifPresent(s -> arr.add(String.format("%-15s / %-15s", addr, s)));
                         }
                         printer.printArray(arr.toArray(new String[0]));
                         break;
@@ -90,10 +91,11 @@ public class Main {
                     case "gate":
                     case "gw":
                     case "gateway":
-                        if (cmd[1].length() > 0) {
-                            printer.println("adding gw " + cmd[1]);
+                        if (cmd[1].matches(RegexConst.IPADDR)) {
+                            nm.setGateway(cmd[1]);
+                            printer.println(String.format("Gateway was set to %s", cmd[1]), INFOCOLOR);
                         } else {
-                            printer.println(nm.getGateway());
+                            printer.println(String.format("Gateway is at %s", nm.getGateway()), INFOCOLOR);
                         }
                         break;
 
