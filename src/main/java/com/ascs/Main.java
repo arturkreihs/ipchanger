@@ -108,6 +108,16 @@ public class Main {
                             printer.println(String.format("Gateway is at %s", nm.getGateway()), INFOCOLOR);
                         }
                         break;
+                    case "h":
+                    case "help":
+                    case "?":
+                        printer.println("Application usage:");
+                        printer.println(String.format("%20s: lists active ip addresses", "list,l"), INFOCOLOR);
+                        printer.println(String.format("%20s: add ip address (ex: \"a10.0.0.1/24\", \"add 10.0.0.1 255.0.0.0\")", "add,a"), INFOCOLOR);
+                        printer.println(String.format("%20s: removes ip address (ex: \"d10.0.0.1\", \"del 10.0.0.1\", \"d3\")", "del,d"), INFOCOLOR);
+                        printer.println(String.format("%20s: without argument - prints gateway, with argument - sets address", "gateway,gate,gw,g"), INFOCOLOR);
+                        printer.println(String.format("%20s: closes application", "quit,exit,q"), INFOCOLOR);
+                        break;
 
                     case "q":
                     case "quit":
