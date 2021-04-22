@@ -46,8 +46,11 @@ public class Main {
                     case "add":
                         if (cmd.length > 2) {
                             printer.println(String.format("Adding %s/%s", cmd[1], cmd[2]), INFOCOLOR);
-                            nm.addAddress(cmd[1], cmd[2]);
-                            printer.println("Address added", SUCCESSCOLOR);
+                            if (nm.addAddress(cmd[1], cmd[2])) {
+                                printer.println("Error while adding the address", ERRCOLOR);
+                            } else {
+                                printer.println("Address added", SUCCESSCOLOR);
+                            }
                             break;
                         }
                         if (cmd[1].contains("/")) {
@@ -56,8 +59,11 @@ public class Main {
                             if (mask.matches(RegexConst.DIGITS)) {
                                 printer.println(String.format("Adding %s/%s", cidr[0], cidr[1]), INFOCOLOR);
                                 var ip = cidr[0];
-                                nm.addAddress(ip, Integer.parseInt(mask));
-                                printer.println("Address added", SUCCESSCOLOR);
+                                if (nm.addAddress(ip, Integer.parseInt(mask))) {
+                                    printer.println("Error while adding the address", ERRCOLOR);
+                                } else {
+                                    printer.println("Address added", SUCCESSCOLOR);
+                                }
                             }
                             break;
                         }
@@ -67,8 +73,11 @@ public class Main {
                     case "del":
                         if (cmd[1].matches(RegexConst.IPADDR)) {
                             printer.println(String.format("Removing %s", cmd[1]), INFOCOLOR);
-                            nm.delAddress(cmd[1]);
-                            printer.println("Address removed", SUCCESSCOLOR);
+                            if (nm.delAddress(cmd[1])) {
+                                printer.println("Address not found", ERRCOLOR);
+                            } else {
+                                printer.println("Address removed", SUCCESSCOLOR);
+                            }
                             break;
                         }
                         if (cmd[1].matches(RegexConst.DIGITS)) {

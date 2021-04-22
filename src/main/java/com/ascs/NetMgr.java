@@ -54,26 +54,23 @@ public class NetMgr {
         return _ni.map(networkInterface -> networkInterface.inetAddresses().map(InetAddress::getHostAddress).filter(addr -> addr.matches(RegexConst.IPADDR)).toArray(String[]::new)).orElseGet(() -> new String[0]);
     }
 
-    public void addAddress(String addr, String mask) {
-        _ni.ifPresent(ni -> {
-            try {
-                var idx = _ni.get().getIndex();
-                Runtime.getRuntime().exec(String.format("netsh interface ipv4 add address name=%d address=%s mask=%s", idx, addr, mask)).waitFor();
-                while(true) {
-                    refresh();
-                    if (Arrays.asList(getAddresses()).contains(addr)) {
-                        break;
-                    }
-                    Thread.sleep(200);
+    public boolean addAddress(String addr, String mask) throws Exception {
+        if (_ni.isPresent()) {
+            var idx = _ni.get().getIndex();
+            var exitval = Runtime.getRuntime().exec(String.format("netsh interface ipv4 add address name=%d address=%s mask=%s", idx, addr, mask)).waitFor();
+            while(true) {
+                refresh();
+                if (Arrays.asList(getAddresses()).contains(addr)) {
+                    break;
                 }
+                Thread.sleep(200);
             }
-            catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        });
+            return exitval != 0;
+        }
+        return true;
     }
 
-    public void addAddress(String addr, int mask) {
+    public boolean addAddress(String addr, int mask) throws Exception {
         if (mask <= 32) {
             var full = mask / 8;
             var rest = mask % 8;
@@ -85,34 +82,34 @@ public class NetMgr {
             if (rest > 0) {
                 maskarr[idx] = (-(255 >> rest)) & 0xff - 1;
             }
-            addAddress(addr, String.format("%d.%d.%d.%d", maskarr[0], maskarr[1], maskarr[2], maskarr[3]));
+            return addAddress(addr, String.format("%d.%d.%d.%d", maskarr[0], maskarr[1], maskarr[2], maskarr[3]));
         }
+        return true;
     }
 
-    public void delAddress(String addr) {
-        _ni.ifPresent(ni -> {
-            try {
-                var idx = _ni.get().getIndex();
-                Runtime.getRuntime().exec(String.format("netsh interface ipv4 delete address name=%d address=%s", idx, addr)).waitFor();
-                while (Arrays.asList(getAddresses()).contains(addr)) {
-                    refresh();
-                    Thread.sleep(200);
+    public boolean delAddress(String addr) throws Exception {
+        if (_ni.isPresent()) {
+            var idx = _ni.get().getIndex();
+            var exitval = Runtime.getRuntime().exec(String.format("netsh interface ipv4 delete address name=%d address=%s", idx, addr)).waitFor();
+            var timeout = 20;
+            while (Arrays.asList(getAddresses()).contains(addr)) {
+                refresh();
+                Thread.sleep(200);
+                if (--timeout == 0) {
+                    return true;
                 }
             }
-            catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        });
+            return exitval != 0;
+        }
+        return true;
     }
 
-    public boolean delAddress(int idx) {
+    public boolean delAddress(int idx) throws Exception {
         var addresses = getAddresses();
         if (idx < addresses.length) {
-            delAddress(addresses[idx]);
-            return false;
-        } else {
-            return true;
+            return delAddress(addresses[idx]);
         }
+        return true;
     }
 
     public Optional<String> getMask(String addr) {
