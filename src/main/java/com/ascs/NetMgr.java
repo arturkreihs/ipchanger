@@ -137,9 +137,10 @@ public class NetMgr {
         return null;
     }
 
-    public void setGateway(String addr) throws Exception {
+    public boolean setGateway(String addr) throws Exception {
         Runtime.getRuntime().exec(String.format("netsh interface ip del route 0.0.0.0/0 %d", _idx)).waitFor();
         Runtime.getRuntime().exec(String.format("netsh interface ip add route 0.0.0.0/0 %d %s", _idx, addr)).waitFor();
+        return addr.equals(getGateway());
     }
 
     private String[] extractCSVList(String data) {

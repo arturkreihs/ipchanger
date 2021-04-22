@@ -8,6 +8,8 @@ import java.util.Scanner;
 public class Main {
 
     private static Ansi.Color INFOCOLOR = Ansi.Color.YELLOW;
+    private static Ansi.Color SUCCESSCOLOR = Ansi.Color.GREEN;
+    private static Ansi.Color ERRCOLOR = Ansi.Color.RED;
 
     public static void main(String[] args) throws Exception {
         var printer = new Printer();
@@ -45,15 +47,17 @@ public class Main {
                         if (cmd.length > 2) {
                             printer.println(String.format("Adding %s/%s", cmd[1], cmd[2]), INFOCOLOR);
                             nm.addAddress(cmd[1], cmd[2]);
+                            printer.println("Address added", SUCCESSCOLOR);
                             break;
                         }
                         if (cmd[1].contains("/")) {
-                            var ipmask = cmd[1].split("/");
-                            var mask = ipmask[1];
+                            var cidr = cmd[1].split("/");
+                            var mask = cidr[1];
                             if (mask.matches(RegexConst.DIGITS)) {
-                                printer.println(String.format("Adding %s/%s", ipmask[0], ipmask[1]), INFOCOLOR);
-                                var ip = ipmask[0];
+                                printer.println(String.format("Adding %s/%s", cidr[0], cidr[1]), INFOCOLOR);
+                                var ip = cidr[0];
                                 nm.addAddress(ip, Integer.parseInt(mask));
+                                printer.println("Address added", SUCCESSCOLOR);
                             }
                             break;
                         }
@@ -64,13 +68,15 @@ public class Main {
                         if (cmd[1].matches(RegexConst.IPADDR)) {
                             printer.println(String.format("Removing %s", cmd[1]), INFOCOLOR);
                             nm.delAddress(cmd[1]);
+                            printer.println("Address removed", SUCCESSCOLOR);
                             break;
                         }
                         if (cmd[1].matches(RegexConst.DIGITS)) {
+                            printer.println(String.format("Removing %s", cmd[1]), INFOCOLOR);
                             if (nm.delAddress(Integer.parseInt(cmd[1]) - 1)) {
-                                printer.println("Address not found", INFOCOLOR);
+                                printer.println("Address not found", ERRCOLOR);
                             } else {
-                                printer.println(String.format("Removing %s", cmd[1]), INFOCOLOR);
+                                printer.println("Address removed", SUCCESSCOLOR);
                             }
                             break;
                         }
@@ -92,8 +98,12 @@ public class Main {
                     case "gw":
                     case "gateway":
                         if (cmd[1].matches(RegexConst.IPADDR)) {
-                            nm.setGateway(cmd[1]);
-                            printer.println(String.format("Gateway was set to %s", cmd[1]), INFOCOLOR);
+                            printer.println(String.format("Setting Gateway to %s", cmd[1]), INFOCOLOR);
+                            if (nm.setGateway(cmd[1])) {
+                                printer.println("Gateway was set", SUCCESSCOLOR);
+                            } else {
+                                printer.println("Error while setting the gateway", ERRCOLOR);
+                            }
                         } else {
                             printer.println(String.format("Gateway is at %s", nm.getGateway()), INFOCOLOR);
                         }
