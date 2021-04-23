@@ -126,12 +126,11 @@ public class Main {
                         printer.println(String.format("%12s: add ip address (ex: \"a10.0.0.1/24\", \"add 10.0.0.1 255.0.0.0\")", "add,a"), INFOCOLOR);
                         printer.println(String.format("%12s: removes ip address (ex: \"d10.0.0.1\", \"del 10.0.0.1\", \"d3\")", "del,d"), INFOCOLOR);
                         printer.println(String.format("%12s: without argument - prints gateway, with argument - sets address", "gate,gw,g"), INFOCOLOR);
-                        printer.println(String.format("%12s: closes application", "quit,exit,q"), INFOCOLOR);
+                        printer.println(String.format("%12s: closes application", "quit,q"), INFOCOLOR);
                         break;
 
                     case "q":
                     case "quit":
-                    case "exit":
                         printer.close();
                         return;
 
