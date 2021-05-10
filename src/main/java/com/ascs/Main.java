@@ -33,7 +33,9 @@ public class Main {
         new AddrDelCmd(printer, nm).register(actions);
         new AddrListCmd(printer, nm).register(actions);
         new GatewayCmd(printer, nm).register(actions);
+        new HelpCmd(printer, actions).register(actions);
 
+//        main program loop
         while (true) {
             printer.print("IPChanger> ", Ansi.Color.BLUE);
             String cmdline = console.nextLine();
@@ -51,20 +53,6 @@ public class Main {
             } else {
                 printer.println("Unknown command", Printer.ERRCOLOR);
             }
-//                    case "h":
-//                    case "help":
-//                    case "?":
-//                        printer.println("Application usage:");
-//                        printer.println(String.format("%12s: lists active ip addresses", "list,l"), INFOCOLOR);
-//                        printer.println(String.format("%12s: add ip address (ex: \"a10.0.0.1/24\", \"add 10.0.0.1 255.0.0.0\")", "add,a"), INFOCOLOR);
-//                        printer.println(String.format("%12s: removes ip address (ex: \"d10.0.0.1\", \"del 10.0.0.1\", \"d3\")", "del,d"), INFOCOLOR);
-//                        printer.println(String.format("%12s: without argument - prints gateway, with argument - sets address", "gate,gw,g"), INFOCOLOR);
-//                        printer.println(String.format("%12s: closes application", "quit,q"), INFOCOLOR);
-//                        break;
-//                    default:
-//                        break;
-//                }
-//            }
         }
     }
 }

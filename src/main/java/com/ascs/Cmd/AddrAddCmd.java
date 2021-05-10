@@ -41,6 +41,11 @@ public class AddrAddCmd implements ICmd {
         }
     }
 
+    @Override
+    public String getHelp() {
+        return "Add IP address (ex: \"a10.0.0.1/8\", \"a 10.0.0.1 255.0.0.0\")";
+    }
+
     private void printInfo(String addr, String mask) {
         _printer.println(String.format("Adding %s/%s", addr, mask), Printer.INFOCOLOR);
     }

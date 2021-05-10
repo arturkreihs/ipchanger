@@ -32,4 +32,9 @@ public class AddrListCmd implements ICmd {
         }
         _printer.printArray(arr.toArray(new String[0]));
     }
+
+    @Override
+    public String getHelp() {
+        return "Lists active IP addresses";
+    }
 }

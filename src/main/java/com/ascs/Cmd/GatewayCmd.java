@@ -38,4 +38,9 @@ public class GatewayCmd implements ICmd {
             _printer.println(String.format("Gateway is at %s", _nm.getGateway()), Printer.INFOCOLOR);
         }
     }
+
+    @Override
+    public String getHelp() {
+        return "Without argument - prints gateway, with argument - sets address";
+    }
 }

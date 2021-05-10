@@ -14,4 +14,9 @@ public class ExitCmd implements ICmd {
     public void exec(Optional<String> arg) {
         System.exit(0);
     }
+
+    @Override
+    public String getHelp() {
+        return "Closes application";
+    }
 }

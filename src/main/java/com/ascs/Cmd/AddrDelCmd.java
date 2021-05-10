@@ -39,6 +39,11 @@ public class AddrDelCmd implements ICmd {
         }
     }
 
+    @Override
+    public String getHelp() {
+        return "Removes IP address (ex: \"d10.0.0.1\", \"d3\")";
+    }
+
     private void printInfo(String addr) {
         _printer.println(String.format("Removing %s", addr), Printer.INFOCOLOR);
     }
