@@ -2,6 +2,7 @@ package com.ascs.Cmd;
 
 import com.ascs.NetMgr;
 import com.ascs.Printer;
+import com.ascs.RegexConst;
 
 import java.util.Map;
 import java.util.Optional;
@@ -22,7 +23,31 @@ public class AddrDelCmd implements ICmd {
     }
 
     @Override
-    public void exec(Optional<String> arg) {
-        _printer.println("del");
+    public void exec(Optional<String> arg) throws Exception {
+        if (arg.isPresent()) {
+            var a = arg.get();
+            if (a.matches(RegexConst.IPADDR)) {
+                printInfo(a);
+                printResult(_nm.delAddress(a));
+                return;
+            }
+            if (a.matches(RegexConst.DIGITS)) {
+                printInfo(a);
+                printResult(_nm.delAddress(Integer.parseInt(a) - 1));
+                return;
+            }
+        }
+    }
+
+    private void printInfo(String addr) {
+        _printer.println(String.format("Removing %s", addr), Printer.INFOCOLOR);
+    }
+
+    private void printResult(boolean result) {
+        if (result) {
+            _printer.println("Address not found", Printer.ERRCOLOR);
+        } else {
+            _printer.println("Address removed", Printer.SUCCESSCOLOR);
+        }
     }
 }
