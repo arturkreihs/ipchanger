@@ -1,9 +1,14 @@
 package com.ascs;
 
+import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 import static org.fusesource.jansi.Ansi.*;
 
 public class Printer {
+
+    public static Ansi.Color INFOCOLOR = Ansi.Color.YELLOW;
+    public static Ansi.Color SUCCESSCOLOR = Ansi.Color.GREEN;
+    public static Ansi.Color ERRCOLOR = Ansi.Color.RED;
 
     public Printer() {
         AnsiConsole.systemInstall();

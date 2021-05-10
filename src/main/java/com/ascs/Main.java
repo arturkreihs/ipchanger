@@ -7,9 +7,6 @@ import java.util.*;
 
 public class Main {
 
-    private static Ansi.Color INFOCOLOR = Ansi.Color.YELLOW;
-    private static Ansi.Color SUCCESSCOLOR = Ansi.Color.GREEN;
-    private static Ansi.Color ERRCOLOR = Ansi.Color.RED;
 
     public static void main(String[] args) throws Exception {
         var printer = new Printer();
@@ -18,7 +15,7 @@ public class Main {
         printer.drawLine();
         printer.print("IPChanger ", Ansi.Color.RED);
         printer.print("by Artur Kreihs");
-        printer.println(String.format("%55s", "Press h for help"), INFOCOLOR);
+        printer.println(String.format("%55s", "Press h for help"), Printer.INFOCOLOR);
         printer.drawLine();
 
         NetMgr nm;
@@ -54,34 +51,6 @@ public class Main {
                 printer.println("Unknown command");
             }
 
-//            if (cmd.length > 0) {
-//                switch (cmd[0]) {
-//                    case "a":
-//                    case "add":
-//                        if (cmd.length > 2) {
-//                            printer.println(String.format("Adding %s/%s", cmd[1], cmd[2]), INFOCOLOR);
-//                            if (nm.addAddress(cmd[1], cmd[2])) {
-//                                printer.println("Error while adding the address", ERRCOLOR);
-//                            } else {
-//                                printer.println("Address added", SUCCESSCOLOR);
-//                            }
-//                            break;
-//                        }
-//                        if (cmd[1].contains("/")) {
-//                            var cidr = cmd[1].split("/");
-//                            var mask = cidr[1];
-//                            if (mask.matches(RegexConst.DIGITS)) {
-//                                printer.println(String.format("Adding %s/%s", cidr[0], cidr[1]), INFOCOLOR);
-//                                var ip = cidr[0];
-//                                if (nm.addAddress(ip, Integer.parseInt(mask))) {
-//                                    printer.println("Error while adding the address", ERRCOLOR);
-//                                } else {
-//                                    printer.println("Address added", SUCCESSCOLOR);
-//                                }
-//                            }
-//                            break;
-//                        }
-//                        break;
 //
 //                    case "d":
 //                    case "del":

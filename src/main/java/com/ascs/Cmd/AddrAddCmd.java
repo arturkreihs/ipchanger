@@ -22,9 +22,34 @@ public class AddrAddCmd implements ICmd {
     }
 
     @Override
-    public void exec(Optional<String> arg) {
-        arg.ifPresent((a) -> {
-            var args = a.split(" ");
-        });
+    public void exec(Optional<String> arg) throws Exception {
+        if (arg.isPresent()) {
+            var a = arg.get();
+            if (a.contains(" ")) {
+                var args = a.split(" ");
+                printInfo(args[0], args[1]);
+                printResult(_nm.addAddress(args[0], args[1]));
+                return;
+            }
+            if (a.contains("/")) {
+                var cidr = a.split("/");
+                var addr = cidr[0];
+                var mask = cidr[1];
+                printInfo(addr, mask);
+                printResult(_nm.addAddress(addr, Integer.parseInt(mask)));
+            }
+        }
+    }
+
+    private void printInfo(String addr, String mask) {
+        _printer.println(String.format("Adding %s/%s", addr, mask), Printer.INFOCOLOR);
+    }
+
+    private void printResult(boolean result) {
+        if (result) {
+            _printer.println("Error while adding the address", Printer.ERRCOLOR);
+        } else {
+            _printer.println("Address added", Printer.SUCCESSCOLOR);
+        }
     }
 }
