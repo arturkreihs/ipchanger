@@ -13,30 +13,30 @@ public class Printer {
         AnsiConsole.systemUninstall();
     }
 
-    void print(String text) {
+    public void print(String text) {
         System.out.print(text);
     }
 
-    void print(String text, Color color) {
+    public void print(String text, Color color) {
         System.out.print(ansi().fg(color).a(text).reset());
     }
 
-    void println(String text) {
+    public void println(String text) {
         System.out.println(text);
     }
 
-    void println(String text, Color color) {
+    public void println(String text, Color color) {
         System.out.println(ansi().fg(color).a(text).reset());
     }
 
-    void printArray(String[] array) {
+    public void printArray(String[] array) {
         int idx = 0;
         for (var item : array) {
             System.out.println(ansi().fgGreen().a(++idx).fgDefault().a(" - ").fgYellow().a(item).reset());
         }
     }
 
-    void drawLine() {
+    public void drawLine() {
         for (int i = 0; i < 80; i++){
             System.out.print('-');
         }
