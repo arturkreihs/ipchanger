@@ -32,6 +32,7 @@ public class Main {
         new AddrAddCmd(printer, nm).register(actions);
         new AddrDelCmd(printer, nm).register(actions);
         new AddrListCmd(printer, nm).register(actions);
+        new GatewayCmd(printer, nm).register(actions);
 
         while (true) {
             printer.print("IPChanger> ", Ansi.Color.BLUE);
@@ -48,24 +49,8 @@ public class Main {
             if (cmd != null) {
                 cmd.exec(argument);
             } else {
-                printer.println("Unknown command");
+                printer.println("Unknown command", Printer.ERRCOLOR);
             }
-
-//                    case "g":
-//                    case "gate":
-//                    case "gw":
-//                    case "gateway":
-//                        if (cmd[1].matches(RegexConst.IPADDR)) {
-//                            printer.println(String.format("Setting Gateway to %s", cmd[1]), INFOCOLOR);
-//                            if (nm.setGateway(cmd[1])) {
-//                                printer.println("Gateway was set", SUCCESSCOLOR);
-//                            } else {
-//                                printer.println("Error while setting the gateway", ERRCOLOR);
-//                            }
-//                        } else {
-//                            printer.println(String.format("Gateway is at %s", nm.getGateway()), INFOCOLOR);
-//                        }
-//                        break;
 //                    case "h":
 //                    case "help":
 //                    case "?":
@@ -76,12 +61,6 @@ public class Main {
 //                        printer.println(String.format("%12s: without argument - prints gateway, with argument - sets address", "gate,gw,g"), INFOCOLOR);
 //                        printer.println(String.format("%12s: closes application", "quit,q"), INFOCOLOR);
 //                        break;
-//
-//                    case "q":
-//                    case "quit":
-//                        printer.close();
-//                        return;
-//
 //                    default:
 //                        break;
 //                }
