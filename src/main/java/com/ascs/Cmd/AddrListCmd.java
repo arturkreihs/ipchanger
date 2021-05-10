@@ -3,6 +3,7 @@ package com.ascs.Cmd;
 import com.ascs.NetMgr;
 import com.ascs.Printer;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
 
@@ -22,7 +23,13 @@ public class AddrListCmd implements ICmd {
     }
 
     @Override
-    public void exec(Optional<String> arg) {
-        _printer.println("list");
+    public void exec(Optional<String> arg) throws Exception {
+        _nm.refresh();
+        var arr = new ArrayList<String>();
+        for (var addr : _nm.getAddresses()) {
+            var mask = _nm.getMask(addr);
+            mask.ifPresent(s -> arr.add(String.format("%-15s / %-15s", addr, s)));
+        }
+        _printer.printArray(arr.toArray(new String[0]));
     }
 }

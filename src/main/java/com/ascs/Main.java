@@ -51,40 +51,6 @@ public class Main {
                 printer.println("Unknown command");
             }
 
-//
-//                    case "d":
-//                    case "del":
-//                        if (cmd[1].matches(RegexConst.IPADDR)) {
-//                            printer.println(String.format("Removing %s", cmd[1]), INFOCOLOR);
-//                            if (nm.delAddress(cmd[1])) {
-//                                printer.println("Address not found", ERRCOLOR);
-//                            } else {
-//                                printer.println("Address removed", SUCCESSCOLOR);
-//                            }
-//                            break;
-//                        }
-//                        if (cmd[1].matches(RegexConst.DIGITS)) {
-//                            printer.println(String.format("Removing %s", cmd[1]), INFOCOLOR);
-//                            if (nm.delAddress(Integer.parseInt(cmd[1]) - 1)) {
-//                                printer.println("Address not found", ERRCOLOR);
-//                            } else {
-//                                printer.println("Address removed", SUCCESSCOLOR);
-//                            }
-//                            break;
-//                        }
-//                        break;
-//
-//                    case "l":
-//                    case "list":
-//                        nm.refresh();
-//                        var arr = new ArrayList<String>();
-//                        for (var addr : nm.getAddresses()) {
-//                            var mask = nm.getMask(addr);
-//                            mask.ifPresent(s -> arr.add(String.format("%-15s / %-15s", addr, s)));
-//                        }
-//                        printer.printArray(arr.toArray(new String[0]));
-//                        break;
-//
 //                    case "g":
 //                    case "gate":
 //                    case "gw":
