@@ -40,12 +40,7 @@ public class NetMgr {
     }
 
     public void refresh() throws Exception {
-        var ni = NetworkInterface.getByIndex(_idx);
-        if (ni != null) {
-            _ni = Optional.of(ni);
-        } else {
-            _ni = Optional.empty();
-        }
+        _ni = Optional.ofNullable(NetworkInterface.getByIndex(_idx));
 
         refreshIPMasks();
     }
@@ -152,11 +147,13 @@ public class NetMgr {
         var lines = Proc.exec(String.format("wmic nicconfig where \"InterfaceIndex = %d\" get IPAddress, IPSubnet /format:csv", _idx));
         if (lines.length > 1) {
             var line = lines[1].split(",");
-            var idx = 0;
-            var masks = extractCSVList(line[2]);
-            for (var ipaddr : extractCSVList(line[1])) {
-                int finalIdx = idx++;
-                _ipmasks.compute(ipaddr.hashCode(), (k, v) -> masks[finalIdx]);
+            if (line.length > 2) {
+                var idx = 0;
+                var masks = extractCSVList(line[2]);
+                for (var ipaddr : extractCSVList(line[1])) {
+                    int finalIdx = idx++;
+                    _ipmasks.compute(ipaddr.hashCode(), (k, v) -> masks[finalIdx]);
+                }
             }
         }
     }
