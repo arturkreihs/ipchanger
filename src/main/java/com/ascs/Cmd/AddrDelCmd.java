@@ -36,6 +36,9 @@ public class AddrDelCmd implements ICmd {
                 printResult(_nm.delAddress(Integer.parseInt(a) - 1));
                 return;
             }
+            _printer.println("Wrong argument format", Printer.ERRCOLOR);
+        } else {
+            _printer.println("Argument required", Printer.ERRCOLOR);
         }
     }
 

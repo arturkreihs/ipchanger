@@ -37,7 +37,11 @@ public class AddrAddCmd implements ICmd {
                 var mask = cidr[1];
                 printInfo(addr, mask);
                 printResult(_nm.addAddress(addr, Integer.parseInt(mask)));
+                return;
             }
+            _printer.println("Wrong argument format", Printer.ERRCOLOR);
+        } else {
+            _printer.println("Argument required", Printer.ERRCOLOR);
         }
     }
 

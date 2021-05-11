@@ -7,7 +7,6 @@ import java.util.*;
 
 public class Main {
 
-
     public static void main(String[] args) throws Exception {
         var printer = new Printer();
         var console = new Scanner(System.in);
@@ -29,11 +28,11 @@ public class Main {
 //        cmds registration
         Map<Character, ICmd> actions = new HashMap<>();
         new ExitCmd().register(actions);
+        new HelpCmd(printer, actions).register(actions);
         new AddrAddCmd(printer, nm).register(actions);
         new AddrDelCmd(printer, nm).register(actions);
         new AddrListCmd(printer, nm).register(actions);
         new GatewayCmd(printer, nm).register(actions);
-        new HelpCmd(printer, actions).register(actions);
 
 //        main program loop
         while (true) {

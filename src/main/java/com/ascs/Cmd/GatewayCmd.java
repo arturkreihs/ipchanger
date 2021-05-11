@@ -33,7 +33,9 @@ public class GatewayCmd implements ICmd {
                 } else {
                     _printer.println("Error while setting the gateway", Printer.ERRCOLOR);
                 }
+                return;
             }
+            _printer.println("Wrong argument format", Printer.ERRCOLOR);
         } else {
             _printer.println(String.format("Gateway is at %s", _nm.getGateway()), Printer.INFOCOLOR);
         }
