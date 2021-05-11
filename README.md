@@ -6,4 +6,5 @@ Compile to tar file. Then create shortcut to java with this jar and MAC address 
 java -tar ipchanger.jar 000102030405
 ```
 where *000102030405* is, of course, the MAC address of the network card to manage.  
-Remember to give administrator's rights for this shortcut.
+Remember to give administrator's rights for this shortcut.  
+![Print Screen](./printscreen.jpg)
