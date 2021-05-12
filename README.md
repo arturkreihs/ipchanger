@@ -1,7 +1,7 @@
 # IPChanger
 Small java program to manage IP addresses of the network card in Windows system.
 ## Setup
-Compile to tar file. Then create shortcut to java with this jar and MAC address in the argument, like below:
+Compile to jar file. Then create shortcut to java with this jar and MAC address in the argument, like below:
 ```console
 java -jar ipchanger.jar 000102030405
 ```
