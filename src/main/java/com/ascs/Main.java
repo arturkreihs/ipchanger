@@ -45,12 +45,14 @@ public class Main {
             } else if(cmdline.length() > 1) {
                 argument = Optional.of(cmdline.substring(1));
             }
-
-            var cmd = actions.getOrDefault(cmdline.charAt(0), null);
-            if (cmd != null) {
-                cmd.exec(argument);
-            } else {
-                printer.println("Unknown command", Printer.ERRCOLOR);
+            
+            if (cmdline.length() > 0) {
+                var cmd = actions.getOrDefault(cmdline.charAt(0), null);
+                if (cmd != null) {
+                    cmd.exec(argument);
+                } else {
+                    printer.println("Unknown command", Printer.ERRCOLOR);
+                }
             }
         }
     }
