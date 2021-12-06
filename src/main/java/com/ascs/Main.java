@@ -33,6 +33,7 @@ public class Main {
         new AddrDelCmd(printer, nm).register(actions);
         new AddrListCmd(printer, nm).register(actions);
         new GatewayCmd(printer, nm).register(actions);
+        new PublicIPCmd(printer).register(actions);
 
 //        main program loop
         while (true) {
