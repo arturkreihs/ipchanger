@@ -3,12 +3,15 @@ package com.ascs;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class NetMgr {
 
+    static private final int _timeout = 5000;
+
     private Optional<NetworkInterface> _ni;
     private final int _idx;
-    private final Map<Integer, String> _ipmasks = new HashMap<Integer, String>();
+    private final Map<Integer, String> _ipmasks = new HashMap<>();
 
     public NetMgr(String mac) throws Exception {
 //        parsing mac address
@@ -52,7 +55,7 @@ public class NetMgr {
     public boolean addAddress(String addr, String mask) throws Exception {
         if (_ni.isPresent()) {
             var idx = _ni.get().getIndex();
-            var exitval = Runtime.getRuntime().exec(String.format("netsh interface ipv4 add address name=%d address=%s mask=%s", idx, addr, mask)).waitFor();
+            var valid = Runtime.getRuntime().exec(String.format("netsh interface ipv4 add address name=%d address=%s mask=%s", idx, addr, mask)).waitFor(_timeout, TimeUnit.MILLISECONDS);
             while(true) {
                 refresh();
                 if (Arrays.asList(getAddresses()).contains(addr)) {
@@ -60,7 +63,7 @@ public class NetMgr {
                 }
                 Thread.sleep(200);
             }
-            return exitval != 0;
+            return !valid;
         }
         return true;
     }
@@ -85,16 +88,16 @@ public class NetMgr {
     public boolean delAddress(String addr) throws Exception {
         if (_ni.isPresent()) {
             var idx = _ni.get().getIndex();
-            var exitval = Runtime.getRuntime().exec(String.format("netsh interface ipv4 delete address name=%d address=%s", idx, addr)).waitFor();
+            var valid = Runtime.getRuntime().exec(String.format("netsh interface ipv4 delete address name=%d address=%s", idx, addr)).waitFor(_timeout, TimeUnit.MILLISECONDS);
             var timeout = 20;
             while (Arrays.asList(getAddresses()).contains(addr)) {
                 refresh();
                 Thread.sleep(200);
                 if (--timeout == 0) {
-                    return true;
+                    return false;
                 }
             }
-            return exitval != 0;
+            return !valid;
         }
         return true;
     }
@@ -130,8 +133,8 @@ public class NetMgr {
     }
 
     public boolean setGateway(String addr) throws Exception {
-        Runtime.getRuntime().exec(String.format("netsh interface ip del route 0.0.0.0/0 %d", _idx)).waitFor();
-        Runtime.getRuntime().exec(String.format("netsh interface ip add route 0.0.0.0/0 %d %s", _idx, addr)).waitFor();
+        Runtime.getRuntime().exec(String.format("netsh interface ip del route 0.0.0.0/0 %d", _idx)).waitFor(_timeout, TimeUnit.MILLISECONDS);
+        Runtime.getRuntime().exec(String.format("netsh interface ip add route 0.0.0.0/0 %d %s", _idx, addr)).waitFor(_timeout, TimeUnit.MILLISECONDS);
         return addr.equals(getGateway());
     }
 
