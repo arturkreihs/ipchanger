@@ -12,6 +12,8 @@ public class GatewayCmd implements ICmd {
     private final Printer _printer;
     private final NetMgr _nm;
 
+    private String _prevGateway = "";
+
     public GatewayCmd(Printer p, NetMgr nm) {
         _printer = p;
         _nm = nm;
@@ -28,10 +30,17 @@ public class GatewayCmd implements ICmd {
             var a = arg.get();
             if (a.matches(RegexConst.IPADDR)) {
                 _printer.println(String.format("Setting Gateway to %s", a), Printer.INFOCOLOR);
-                if (_nm.setGateway(a)) {
-                    _printer.println("Gateway was set", Printer.SUCCESSCOLOR);
+                _prevGateway = _nm.getGateway();
+                setGateway(a);
+                return;
+            } else if (a.equals("s")) {
+                if (_prevGateway.matches(RegexConst.IPADDR)) {
+                    var newGateway = _prevGateway;
+                    _prevGateway = _nm.getGateway();
+                    _printer.println(String.format("Switching gateway to %s", newGateway), Printer.INFOCOLOR);
+                    setGateway(newGateway);
                 } else {
-                    _printer.println("Error while setting the gateway", Printer.ERRCOLOR);
+                    _printer.println("Gateway has not yet been set", Printer.ERRCOLOR);
                 }
                 return;
             }
@@ -43,6 +52,14 @@ public class GatewayCmd implements ICmd {
 
     @Override
     public String getHelp() {
-        return "Without argument - prints gateway, with argument - sets address";
+        return "Without argument - prints, with argument - sets, 's' - fast switch";
+    }
+
+    private void setGateway(String addr) throws Exception {
+        if (_nm.setGateway(addr)) {
+            _printer.println("Gateway was set", Printer.SUCCESSCOLOR);
+        } else {
+            _printer.println("Error while setting the gateway", Printer.ERRCOLOR);
+        }
     }
 }
