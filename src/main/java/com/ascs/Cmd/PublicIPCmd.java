@@ -1,6 +1,7 @@
 package com.ascs.Cmd;
 
 import com.ascs.Printer;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -29,15 +30,12 @@ public class PublicIPCmd implements ICmd {
 
     @Override
     public void exec(Optional<String> arg) throws Exception {
-        URL url = new URL("http://ipinfo.io/ip");
-
         try {
-            URLConnection conn = url.openConnection();
-            conn.setReadTimeout(_timeout);
-            conn.setConnectTimeout(_timeout);
-            conn.connect();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
-            _printer.println(reader.readLine(), INFOCOLOR);
+            var publicIP = getLine(new URL("http://ipinfo.io/ip"));
+            var json = new JSONObject(getLine(new URL("http://ip-api.com/json/" + publicIP)));
+            var country = json.getString("country");
+            _printer.print(publicIP, INFOCOLOR);
+            _printer.println(" (" + country + ")");
         } catch (IOException ex) {
             _printer.println("Error while getting the public address", ERRCOLOR);
         }
@@ -45,4 +43,13 @@ public class PublicIPCmd implements ICmd {
 
     @Override
     public String getHelp() { return "Prints public IP address"; }
+
+    private String getLine(URL url) throws Exception {
+        URLConnection conn = url.openConnection();
+        conn.setReadTimeout(_timeout);
+        conn.setConnectTimeout(_timeout);
+        conn.connect();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+        return reader.readLine();
+    }
 }
