@@ -4,6 +4,8 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.function.IntFunction;
+import java.util.regex.Pattern;
 
 public class NetMgr {
 
@@ -12,6 +14,8 @@ public class NetMgr {
     private Optional<NetworkInterface> _ni;
     private final int _idx;
     private final Map<Integer, String> _ipmasks = new HashMap<>();
+
+    private final Pattern _ipSep = Pattern.compile("\\.");
 
     public NetMgr(String mac) throws Exception {
 //        parsing mac address
@@ -136,6 +140,36 @@ public class NetMgr {
         Runtime.getRuntime().exec(String.format("netsh interface ip del route 0.0.0.0/0 %d", _idx)).waitFor(_timeout, TimeUnit.MILLISECONDS);
         Runtime.getRuntime().exec(String.format("netsh interface ip add route 0.0.0.0/0 %d %s", _idx, addr)).waitFor(_timeout, TimeUnit.MILLISECONDS);
         return addr.equals(getGateway());
+    }
+
+    public String getNet(String addr) {
+        var mask = getMask(addr);
+        if (mask.isPresent()) {
+            var r = new long[4];
+            var bAddr = ipToBytes(addr);
+            var bMask = ipToBytes(mask.get());
+            if (bAddr != null && bMask != null) {
+                if (bAddr.length == 4 && bMask.length == 4) {
+                    for (var i = 0; i < 4; ++i) {
+                        r[i] = (bAddr[i] & bMask[i]) & 0xFFL;
+                    }
+                    return String.format("%d.%d.%d.%d", r[0], r[1], r[2], r[3]);
+                }
+            }
+        }
+        return null;
+    }
+
+    private byte[] ipToBytes(String addr) {
+        var a = new byte[4];
+        var octets = _ipSep.split(addr);
+        if (octets.length == 4) {
+            for (var i = 0; i < 4; ++i) {
+                a[i] = (byte)Integer.parseInt(octets[i]);
+            }
+            return a;
+        }
+        return null;
     }
 
     private String[] extractCSVList(String data) {
