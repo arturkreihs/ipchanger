@@ -1,14 +1,11 @@
 package com.ascs.Cmd;
 
+import com.ascs.NetMgr;
 import com.ascs.Printer;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URL;
-import java.net.URLConnection;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Optional;
 
@@ -31,8 +28,8 @@ public class PublicIPCmd implements ICmd {
     @Override
     public void exec(Optional<String> arg) throws Exception {
         try {
-            var publicIP = getLine(new URL("http://ipinfo.io/ip"));
-            var json = new JSONObject(getLine(new URL("http://ip-api.com/json/" + publicIP)));
+            var publicIP = NetMgr.getLine(new URL("http://ipinfo.io/ip"));
+            var json = new JSONObject(NetMgr.getLine(new URL("http://ip-api.com/json/" + publicIP)));
             var country = json.getString("country");
             _printer.print(publicIP, INFOCOLOR);
             _printer.println(" (" + country + ")");
@@ -44,12 +41,5 @@ public class PublicIPCmd implements ICmd {
     @Override
     public String getHelp() { return "Prints public IP address"; }
 
-    private String getLine(URL url) throws Exception {
-        URLConnection conn = url.openConnection();
-        conn.setReadTimeout(_timeout);
-        conn.setConnectTimeout(_timeout);
-        conn.connect();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
-        return reader.readLine();
-    }
+
 }
