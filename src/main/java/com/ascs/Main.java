@@ -27,7 +27,7 @@ public class Main {
 
 //        cmds registration
         Map<Character, ICmd> actions = new HashMap<>();
-        new ExitCmd().register(actions);
+        new ExitCmd(printer).register(actions);
         new HelpCmd(printer, actions).register(actions);
         new AddrAddCmd(printer, nm).register(actions);
         new AddrDelCmd(printer, nm).register(actions);
