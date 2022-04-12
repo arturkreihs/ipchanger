@@ -35,7 +35,7 @@ public class Main {
         new GatewayCmd(printer, nm).register(actions);
         new PublicIPCmd(printer).register(actions);
         new MacGetCmd(printer).register(actions);
-//        new PingCmd(printer, nm).register(actions);
+        new PingCmd(printer, nm).register(actions);
 
 //        main program loop
         while (true) {

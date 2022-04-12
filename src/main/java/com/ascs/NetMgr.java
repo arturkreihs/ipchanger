@@ -20,7 +20,7 @@ public class NetMgr {
     private final int _idx;
     private final Map<Integer, String> _ipmasks = new HashMap<>();
 
-    private final Pattern _ipSep = Pattern.compile("\\.");
+    public final static Pattern IPSep = Pattern.compile("\\.");
 
     public NetMgr(String mac) throws Exception {
 //        parsing mac address
@@ -156,27 +156,27 @@ public class NetMgr {
         return addr.equals(getGateway());
     }
 
-    public String getNet(String addr) {
-        var mask = getMask(addr);
-        if (mask.isPresent()) {
-            var r = new long[4];
-            var bAddr = ipToBytes(addr);
-            var bMask = ipToBytes(mask.get());
-            if (bAddr != null && bMask != null) {
-                if (bAddr.length == 4 && bMask.length == 4) {
-                    for (var i = 0; i < 4; ++i) {
-                        r[i] = (bAddr[i] & bMask[i]) & 0xFFL;
-                    }
-                    return String.format("%d.%d.%d.%d", r[0], r[1], r[2], r[3]);
-                }
-            }
-        }
-        return null;
-    }
+//    public String getNet(String addr) {
+//        var mask = getMask(addr);
+//        if (mask.isPresent()) {
+//            var r = new long[4];
+//            var bAddr = ipToBytes(addr);
+//            var bMask = ipToBytes(mask.get());
+//            if (bAddr != null && bMask != null) {
+//                if (bAddr.length == 4 && bMask.length == 4) {
+//                    for (var i = 0; i < 4; ++i) {
+//                        r[i] = (bAddr[i] & bMask[i]) & 0xFFL;
+//                    }
+//                    return String.format("%d.%d.%d.%d", r[0], r[1], r[2], r[3]);
+//                }
+//            }
+//        }
+//        return null;
+//    }
 
-    private byte[] ipToBytes(String addr) {
+    public static byte[] ipToBytes(String addr) {
         var a = new byte[4];
-        var octets = _ipSep.split(addr);
+        var octets = IPSep.split(addr);
         if (octets.length == 4) {
             for (var i = 0; i < 4; ++i) {
                 a[i] = (byte)Integer.parseInt(octets[i]);
