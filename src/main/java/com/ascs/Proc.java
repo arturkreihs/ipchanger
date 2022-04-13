@@ -10,4 +10,8 @@ public class Proc {
         data = data.substring(1).substring(0, data.length() - 2);
         return data.split("\\^");
     }
+
+    public static int execStatus(String cmd) throws Exception {
+        return Runtime.getRuntime().exec(cmd).waitFor();
+    }
 }

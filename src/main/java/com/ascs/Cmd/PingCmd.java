@@ -47,7 +47,7 @@ public class PingCmd implements ICmd {
             }
 
             // TEST
-//            System.out.println((input[0] & 0xFF) + "." + (input[1] & 0xFF) + "." + (input[2] & 0xFF) + "." + (input[3] & 0xFF));
+//            System.out.println(NetMgr.bytesToIP(input));
 
             //for every ip in list do
             //  ip mul mask
@@ -61,7 +61,7 @@ public class PingCmd implements ICmd {
                     var ifaceNet = mixAddrs(bIfaceAddr, bIfaceMask, this::mulFunction);
                     var inputNet = mixAddrs(input, bIfaceMask, this::mulFunction);
                     long score = 0;
-                    var mixed = mixAddrs(inputNet, ifaceNet, this::xorFunction);
+                    var mixed = mixAddrs(inputNet, ifaceNet, this::cmpFunction);
                     for (var i = 0; i < 4; i++) {
                         score += mixed[i] & 0xFF;
                     }
@@ -71,8 +71,7 @@ public class PingCmd implements ICmd {
 
             // TEST
 //            for (var c : competitors.entrySet()) {
-//                var ip = c.getKey();
-//                System.out.println((ip[0] & 0xFF) + "." + (ip[1] & 0xFF) + "." +(ip[2] & 0xFF) + "." + (ip[3] & 0xFF) + " - " + c.getValue());
+//                System.out.println(NetMgr.bytesToIP(c.getKey()) + " - " + c.getValue());
 //            }
 
             // compare results, smallest wins
@@ -90,10 +89,14 @@ public class PingCmd implements ICmd {
             var addr = mixAddrs(ifaceNet, input, this::orFunction);
 
             // TEST
-//            _printer.println((addr[0] & 0xFF) + "." + (addr[1] & 0xFF) + "." +(addr[2] & 0xFF) + "." + (addr[3] & 0xFF));
+            _printer.println(NetMgr.bytesToIP(addr));
 
-//            Proc.exec("ping -c1 " + NetMgr.bytesToIP(addr));
-            _printer.println("ping -c1 " + NetMgr.bytesToIP(addr));
+            var status = Proc.execStatus(String.format("ping %s -n 1 -w 1", NetMgr.bytesToIP(addr)));
+            if (status == 0) {
+                _printer.println("Host available", Printer.SUCCESSCOLOR);
+            } else {
+                _printer.println("Host unavailable", Printer.ERRCOLOR);
+            }
         } else {
             _printer.println("Argument is required", Printer.ERRCOLOR);
         }
@@ -116,12 +119,17 @@ public class PingCmd implements ICmd {
         return (byte)(a & b);
     }
 
-    private byte xorFunction(byte a, byte b) {
-        if (a == 0) return (byte)0xff;
-        return (byte)(a ^ b);
-    }
-
     private byte orFunction(byte a, byte b) {
         return (byte)(a | b);
+    }
+
+    private byte cmpFunction(byte a, byte b) {
+        byte score = 0;
+        for (var i = 0; i < 8; i++) {
+            if ((a & (1<<i)) != (b & (1<<i))) {
+                ++score;
+            }
+        }
+        return score;
     }
 }
