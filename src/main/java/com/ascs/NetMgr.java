@@ -186,6 +186,10 @@ public class NetMgr {
         return null;
     }
 
+    public static String bytesToIP(byte[] addr) {
+        return String.format("%d.%d.%d.%d", (addr[0] & 0xff), (addr[1] & 0xff), (addr[2] & 0xff), (addr[3] & 0xff));
+    }
+
     private String[] extractCSVList(String data) {
         if (data.startsWith("{") && data.endsWith("}")) {
             data = data.substring(1).substring(0, data.length() - 2);
