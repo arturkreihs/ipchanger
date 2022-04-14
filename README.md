@@ -1,5 +1,13 @@
 # IPChanger
-Small java program to manage IP addresses of the network card in Windows system.
+Small java program to manage IP addresses of the network card in Windows system.\
+I've made it to manage network card in a faster way. It also has some other useful commands.
+## Features
+- Listing of assigned IP addresses.
+- Adding/removing IP addresses.
+- Setting default gateway.
+- Printing vendor of given MAC.
+- Printing public IP address as seen from outside.
+- Ping IP address given partially (last octets). Application will determine full IP based on the interface IP list.
 ## Setup
 Compile to jar file. Then create shortcut to java with this jar and MAC address in the argument, like below:
 ```console
