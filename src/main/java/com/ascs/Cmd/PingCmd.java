@@ -104,7 +104,7 @@ public class PingCmd implements ICmd {
 
     @Override
     public String getHelp() {
-        return "null";
+        return "Type ending of IP address to ping (ex: \"c5.6\")";
     }
 
     private byte[] mixAddrs(byte[] a, byte[] b, BiFunction<Byte, Byte, Byte> function) {
