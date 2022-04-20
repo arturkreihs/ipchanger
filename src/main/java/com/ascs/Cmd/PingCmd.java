@@ -91,7 +91,9 @@ public class PingCmd implements ICmd {
             // TEST
             _printer.println(NetMgr.bytesToIP(addr));
 
-            var status = Proc.execStatus(String.format("ping %s -n 1 -w 1", NetMgr.bytesToIP(addr)));
+            var ipaddr = NetMgr.bytesToIP(addr);
+            Proc.execStatus(String.format("arp -d %s", ipaddr));
+            var status = Proc.execStatus(String.format("ping %s -n 1 -w 1", ipaddr));
             if (status == 0) {
                 _printer.println("Host available", Printer.SUCCESSCOLOR);
             } else {

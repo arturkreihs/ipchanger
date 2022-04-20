@@ -7,8 +7,11 @@ public class Proc {
         p.waitFor();
 
         var data = new String(stream.readAllBytes()).replace("\r\r\n", "^");
-        data = data.substring(1).substring(0, data.length() - 2);
-        return data.split("\\^");
+        if (data.length() > 2) {
+            data = data.substring(1).substring(0, data.length() - 2);
+            return data.split("\\^");
+        }
+        return new String[0];
     }
 
     public static int execStatus(String cmd) throws Exception {
