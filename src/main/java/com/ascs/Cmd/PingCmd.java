@@ -127,6 +127,7 @@ public class PingCmd implements ICmd {
 
     private byte cmpFunction(byte a, byte b) {
         byte score = 0;
+        if (a != 0 && b == 0) return (byte)0xff;
         for (var i = 0; i < 8; i++) {
             if ((a & (1<<i)) != (b & (1<<i))) {
                 ++score;
