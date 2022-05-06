@@ -7,11 +7,8 @@ import com.ascs.RegexConst;
 
 import java.util.*;
 import java.util.function.BiFunction;
-import java.util.regex.Pattern;
 
 public class PingCmd implements ICmd {
-
-//    private final Pattern _mac = Pattern.compile(RegexConst.MACADDR);
 
     private final Printer _printer;
     private final NetMgr _nm;
@@ -98,14 +95,17 @@ public class PingCmd implements ICmd {
             Proc.execStatus(String.format("arp -d %s", ipaddr));
             var status = Proc.execStatus(String.format("ping %s -n 1 -w 1", ipaddr));
             if (status == 0) {
-                _printer.println("Host available", Printer.SUCCESSCOLOR);
+                _printer.print("Host available", Printer.SUCCESSCOLOR);
 
                 //printing MAC
-//                var macRaw = Proc.exec(String.format("arp -a %s", ipaddr));
-//                var macStream = Arrays.stream(macRaw).filter(s -> s.contains(ipaddr));
-//                var macLine = macStream.findAny();
-//                macLine.ifPresent(_printer::println);
-//                macLine.ifPresent((ml) -> _printer.println(_mac.matcher(ml).group()));
+                var macRaw = Proc.exec(String.format("arp -a %s", ipaddr));
+                var macStream = Arrays.stream(macRaw).filter(s -> s.contains(ipaddr));
+                var macLine = macStream.findAny();
+                macLine.ifPresent((ml) -> {
+                    var matcher = RegexConst.MACADDR.matcher(ml);
+                    if (matcher.find()) _printer.println(String.format(" %s", matcher.group().replace('-', ':')));
+                    else _printer.println();
+                });
             } else {
                 _printer.println("Host unavailable", Printer.ERRCOLOR);
             }

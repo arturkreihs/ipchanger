@@ -30,6 +30,10 @@ public class Printer {
         System.out.println(text);
     }
 
+    public void println() {
+        System.out.println();
+    }
+
     public void println(String text, Color color) {
         System.out.println(ansi().fgBright(color).a(text).reset());
     }
