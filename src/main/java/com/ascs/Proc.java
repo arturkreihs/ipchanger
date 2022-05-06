@@ -6,11 +6,18 @@ public class Proc {
         var stream = p.getInputStream();
         p.waitFor();
 
-        var data = new String(stream.readAllBytes()).replace("\r\r\n", "^");
+        var all = new String(stream.readAllBytes());
+
+        String splitter;
+        if (all.contains("\r\r\n")) splitter = "\r\r\n";
+        else splitter = "\r\n";
+
+        var data = all.replace(splitter, "^");
         if (data.length() > 2) {
             data = data.substring(1).substring(0, data.length() - 2);
             return data.split("\\^");
         }
+
         return new String[0];
     }
 
