@@ -26,12 +26,12 @@ public class AddrDelCmd implements ICmd {
     public void exec(Optional<String> arg) throws Exception {
         if (arg.isPresent()) {
             var a = arg.get();
-            if (a.matches(RegexConst.IPADDR)) {
+            if (RegexConst.IPADDR.matcher(a).matches()) {
                 printInfo(a);
                 printResult(_nm.delAddress(a));
                 return;
             }
-            if (a.matches(RegexConst.DIGITS)) {
+            if (RegexConst.DIGITS.matcher(a).matches()) {
                 printInfo(a);
                 printResult(_nm.delAddress(Integer.parseInt(a) - 1));
                 return;

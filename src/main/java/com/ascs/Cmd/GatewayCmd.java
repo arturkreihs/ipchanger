@@ -28,13 +28,13 @@ public class GatewayCmd implements ICmd {
     public void exec(Optional<String> arg) throws Exception {
         if (arg.isPresent()) {
             var a = arg.get();
-            if (a.matches(RegexConst.IPADDR)) {
+            if (RegexConst.IPADDR.matcher(a).matches()) {
                 _printer.println(String.format("Setting Gateway to %s", a), Printer.INFOCOLOR);
                 _prevGateway = _nm.getGateway();
                 setGateway(a);
                 return;
             } else if (a.equals("s")) {
-                if (_prevGateway.matches(RegexConst.IPADDR)) {
+                if (RegexConst.IPADDR.matcher(_prevGateway).matches()) {
                     var newGateway = _prevGateway;
                     _prevGateway = _nm.getGateway();
                     _printer.println(String.format("Switching gateway to %s", newGateway), Printer.INFOCOLOR);

@@ -67,7 +67,7 @@ public class NetMgr {
     }
 
     public String[] getAddresses() {
-        return _ni.map(networkInterface -> networkInterface.inetAddresses().map(InetAddress::getHostAddress).filter(addr -> addr.matches(RegexConst.IPADDR)).toArray(String[]::new)).orElseGet(() -> new String[0]);
+        return _ni.map(networkInterface -> networkInterface.inetAddresses().map(InetAddress::getHostAddress).filter(addr -> RegexConst.IPADDR.matcher(addr).matches()).toArray(String[]::new)).orElseGet(() -> new String[0]);
     }
 
     public boolean addAddress(String addr, String mask) throws Exception {
