@@ -1,12 +1,15 @@
 package com.ascs.Cmd;
 
+import com.ascs.PingTask;
 import com.ascs.Printer;
-import com.ascs.Proc;
 import com.ascs.RegexConst;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class RangerCmd implements ICmd {
 
@@ -34,11 +37,25 @@ public class RangerCmd implements ICmd {
                     var start = Integer.parseInt(parts[0].substring(constIPend + 1));
                     var end = Integer.parseInt(parts[1]);
 
+                    if (end - start > 20) {
+                        _printer.println("Range too big", Printer.ERRCOLOR);
+                        return;
+                    }
+
+                    Queue<Integer> ongoing = new ArrayBlockingQueue<>(end - start + 1);
+
                     for (var idx = start; idx <= end; idx++) {
                         var ipaddr = constIP + idx;
-                        Proc.execStatus(String.format("arp -d %s", ipaddr));
-                        var status = Proc.execStatus(String.format("ping %s -n 1 -w 1", ipaddr)) == 0;
-                        _printer.println(constIP + idx, status ? Printer.SUCCESSCOLOR : Printer.ERRCOLOR);
+                        int finalIdx = idx;
+                        ongoing.add(finalIdx);
+                        new Thread(new PingTask(ipaddr, (state) -> {
+                            _printer.println(ipaddr, state ? Printer.SUCCESSCOLOR : Printer.ERRCOLOR);
+                            ongoing.remove(finalIdx);
+                        })).start();
+                    }
+
+                    while (!ongoing.isEmpty()) {
+                        Thread.sleep(500);
                     }
                 }
             }
