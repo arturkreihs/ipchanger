@@ -9,7 +9,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.stream.Collectors;
 
 public class RangerCmd implements ICmd {
 
@@ -37,26 +39,31 @@ public class RangerCmd implements ICmd {
                     var start = Integer.parseInt(parts[0].substring(constIPend + 1));
                     var end = Integer.parseInt(parts[1]);
 
-                    if (end - start > 20) {
+                    if (end - start > 60) {
                         _printer.println("Range too big", Printer.ERRCOLOR);
                         return;
                     }
 
-                    Queue<Integer> ongoing = new ArrayBlockingQueue<>(end - start + 1);
-
+                    // collect ping responses
+                    Map<Integer, Boolean> results = new ConcurrentHashMap<>();
                     for (var idx = start; idx <= end; idx++) {
-                        var ipaddr = constIP + idx;
-                        int finalIdx = idx;
-                        ongoing.add(finalIdx);
-                        new Thread(new PingTask(ipaddr, (state) -> {
-                            _printer.println(ipaddr, state ? Printer.SUCCESSCOLOR : Printer.ERRCOLOR);
-                            ongoing.remove(finalIdx);
-                        })).start();
+                        int idxCopy = idx;
+                        new Thread(new PingTask(constIP + idx, (state) -> results.put(idxCopy, state))).start();
                     }
 
-                    while (!ongoing.isEmpty()) {
-                        Thread.sleep(500);
+                    // wait for full collection
+                    while (results.size() < end - start + 1) Thread.sleep(200);
+
+                    // present results
+                    var idx = 0;
+                    for (var key : results.keySet().stream().sorted().collect(Collectors.toList())) {
+                        var ipaddr = constIP + key;
+                        var state = results.get(key);
+                        _printer.print(String.format("%-16s", ipaddr), state ? Printer.SUCCESSCOLOR : Printer.ERRCOLOR);
+                        if (++idx % 5 == 0) _printer.println();
                     }
+
+                    _printer.println();
                 }
             }
         }
